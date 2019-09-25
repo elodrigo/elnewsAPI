@@ -1,4 +1,4 @@
-# elnews_backend
+# elnews backend server
 
 ### loads/my_config.go
 
