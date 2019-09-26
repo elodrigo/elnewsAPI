@@ -43,7 +43,7 @@ func GetSayingTodayFromDB() []SayingToday {
 
 	var sayingTodayArray []SayingToday
 
-	// To make available to pass parameter to sql query, do not recommend to save sql query in string variable.
+	// To make available parameter to pass to sql query, not recommend to save sql query in string variable.
 	// Better to hard code query in db.Query("")
 	rows, err := dbPostgres.Query("select id, title, author, description, reset_datetime, origin_id from sayingtoday")
 	if err != nil {
