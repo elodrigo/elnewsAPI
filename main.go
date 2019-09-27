@@ -42,17 +42,6 @@ func main() {
 	eventsRouter.Methods("GET").Path("/saying_today_array").HandlerFunc(api.SayingTodayJSONArray)
 	eventsRouter.Methods("POST").Path("/weather_today_normal").HandlerFunc(api.WeatherDongNeTodayJSON)
 
-	// Writer SubRouter
-	writerRouter := r.PathPrefix("/writer").Subrouter()
-
-	// Writing Events by Editors
-	writerRouter.Methods("POST").Path("/insert_writing/cheditor").HandlerFunc(api.InsertChEditor)
-	writerRouter.Methods("POST").Path("/update_writing/cheditor").HandlerFunc(api.UpdateChEditor)
-	writerRouter.Methods("POST").Path("/delete_writing/cheditor").HandlerFunc(api.DeleteChEditor)
-
-	// Views by Editors
-	writerRouter.Methods("GET").Path("/view/cheditor/{link_url}").HandlerFunc(api.GetSingleChWriterJSON)
-
 	// Accounts SubRouter
 	accountsRouter := r.PathPrefix("/accounts").Subrouter()
 
