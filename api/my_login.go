@@ -143,6 +143,7 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	err = json.Unmarshal(userInfo, &authUser.KaKaoUser)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("500 - Something bad happened!"))
 		return
 	}
 	log.Println(authUser.KaKaoUser.ID)
@@ -152,6 +153,7 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(authUser.KaKaoUser)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("500 - Something bad happened!"))
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -323,6 +325,7 @@ func LogoutSession(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - Something bad happened!"))
+		return
 	}
 	w.WriteHeader(http.StatusOK)
 	return
