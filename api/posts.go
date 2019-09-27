@@ -16,22 +16,22 @@ type PostsUnion struct {
 	Title 		string
 	Link		string
 	CreateDate	string			`db:"create_date" json:"create_date"`
-	ModifyDate	sql.NullString	`db:"modify_date" json:"modify_date"`
+	ModifyDate	sql.NullString		`db:"modify_date" json:"modify_date"`
 	Author		sql.NullString
-	ShortParagraph	sql.NullString	`db:"short_paragraph" json:"short_paragraph"`
+	ShortParagraph	sql.NullString		`db:"short_paragraph" json:"short_paragraph"`
 	Category	sql.NullString
-	FeedImage	sql.NullString	`db:"feed_image" json:"feed_image"`
-	OriginalLink	sql.NullString	`db:"original_link" json:"original_link"`
-	FeedImageSaved	sql.NullString	`db:"feed_image_saved" json:"feed_image_saved"`
+	FeedImage	sql.NullString		`db:"feed_image" json:"feed_image"`
+	OriginalLink	sql.NullString		`db:"original_link" json:"original_link"`
+	FeedImageSaved	sql.NullString		`db:"feed_image_saved" json:"feed_image_saved"`
 	Factor		int64			`json:"-"`
-	TableType		sql.NullString	`db:"table_type" json:"table_type"`
+	TableType	sql.NullString		`db:"table_type" json:"table_type"`
 
 }
 
 type PostsUnionSet struct {
 
 	Posts	[]PostsUnion	`json:"posts"`
-	LastID	int64			`json:"lastID"`
+	LastID	int64		`json:"lastID"`
 
 }
 
