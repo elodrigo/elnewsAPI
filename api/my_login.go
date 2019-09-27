@@ -175,8 +175,9 @@ func GetLoginURLJson(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - Something bad happened!"))
+		return
 	}
-
+	return
 }
 
 func GetLoginURL(loginType string, state string) string {
