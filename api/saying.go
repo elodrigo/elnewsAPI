@@ -25,23 +25,29 @@ func SayingTodayJSONArray(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	sayingTodayArray := GetSayingTodayFromDB()
-
+	sayingTodayArray, err := GetSayingTodayFromDB()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - Something bad happened!"))
+		return
+	}
+	
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(w).Encode(sayingTodayArray)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - Something bad happened!"))
+		return
 	}
 	return
 }
 
-func GetSayingTodayFromDB() []SayingToday {
+func GetSayingTodayFromDB() ([]SayingToday, error) {
 
 	dbPostgres, err := pgx.Connect(loads.PgConfigLoaded)
 	if err != nil {
-		log.Println(err.Error())
+		return nil, err
 	}
 
 	var sayingTodayArray []SayingToday
@@ -50,17 +56,15 @@ func GetSayingTodayFromDB() []SayingToday {
 	// Better to hard code query in db.Query("")
 	rows, err := dbPostgres.Query("select id, title, author, description, reset_datetime, origin_id from sayingtoday")
 	if err != nil {
-		log.Println(err)
+		return nil, err
 	}
 	defer rows.Close()
-
-	//var lastID int
 
 	for rows.Next() {
 		var s SayingToday
 		err = rows.Scan(&s.ID, &s.Title, &s.Author, &s.Description, &s.ResetDatetime, &s.OriginID)
 		if err != nil {
-			log.Println(err.Error())
+			return nil, err
 		}
 
 		sayingTodayArray = append(sayingTodayArray, s)
@@ -68,8 +72,5 @@ func GetSayingTodayFromDB() []SayingToday {
 
 	}
 
-	//log.Println(reflect.TypeOf(n[1].FeedImageSaved.String))
-	//log.Println(rssNewsArray)
-
-	return sayingTodayArray
+	return sayingTodayArray, err
 }
