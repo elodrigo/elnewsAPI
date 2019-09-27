@@ -31,9 +31,10 @@ func SayingTodayJSONArray(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(w).Encode(sayingTodayArray)
 	if err != nil {
-		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - Something bad happened!"))
 	}
-
+	return
 }
 
 func GetSayingTodayFromDB() []SayingToday {
@@ -49,7 +50,7 @@ func GetSayingTodayFromDB() []SayingToday {
 	// Better to hard code query in db.Query("")
 	rows, err := dbPostgres.Query("select id, title, author, description, reset_datetime, origin_id from sayingtoday")
 	if err != nil {
-		log.Println(err.Error())
+		log.Println(err)
 	}
 	defer rows.Close()
 
