@@ -53,7 +53,8 @@ func PostsUnionJSON (w http.ResponseWriter, r *http.Request) {
 	} else {
 		l1, err := strconv.Atoi(lastIDFrom)
 		if err != nil {
-			fmt.Fprintf(w, "last id is not an integer")
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("400 - Can't find enough data from request"))
 			return
 		} else {
 			postsUnionArray, lastID = GetNextPostsUnionFromDB(15, int64(l1))
@@ -64,7 +65,9 @@ func PostsUnionJSON (w http.ResponseWriter, r *http.Request) {
 		Posts: postsUnionArray,
 		LastID: lastID,
 	}
-
+	
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(w).Encode(postsUnionSet)
 	if err != nil {
 		log.Println(err)
