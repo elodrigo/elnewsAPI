@@ -61,7 +61,6 @@ func Authorization(r *http.Request) (int64, error) {
 		// token을 카카오 api url로 보내 응답 받기
 		accessTokenInfoResp, err = client.Get(KaKaoAccessTokenInfoURL)
 		if err != nil {
-			log.Println(err)
 			return 0, err
 		}
 		defer accessTokenInfoResp.Body.Close()
@@ -85,9 +84,6 @@ func Authorization(r *http.Request) (int64, error) {
 		err = errors.New("expired: AccessToken is expired")
 		return 0, err
 	}
-
-	// 앱 아이디 체크
-	log.Println(accessTokens.AppID)
 
 	// 유저의 번호로된 아이디와 함께 리턴
 	return accessTokens.ID, err
