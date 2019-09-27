@@ -57,7 +57,11 @@ func PostsUnionJSON (w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("400 - Can't find enough data from request"))
 			return
 		} else {
-			postsUnionArray, lastID = GetNextPostsUnionFromDB(15, int64(l1))
+			postsUnionArray, lastID, err = GetNextPostsUnionFromDB(15, int64(l1))
+			if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("400 - Can't find enough data from request"))
+			return
 		}
 	}
 
@@ -70,18 +74,20 @@ func PostsUnionJSON (w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(w).Encode(postsUnionSet)
 	if err != nil {
-		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - Something bad happened!"))
+		return
 	}
 	return
 
 }
 
 
-func GetFirstPostsUnionFromDB(limitNum int) ([]PostsUnion, int64) {
+func GetFirstPostsUnionFromDB(limitNum int) ([]PostsUnion, int64, error) {
 
 	dbPostgres, err := pgx.Connect(loads.PgConfigLoaded)
 	if err != nil {
-		log.Println(err.Error())
+		return nil, nil, err
 	}
 	defer dbPostgres.Close()
 
@@ -95,7 +101,7 @@ func GetFirstPostsUnionFromDB(limitNum int) ([]PostsUnion, int64) {
 
 	rows, err := dbPostgres.Query(sqlQuery, limitNum)
 	if err != nil {
-		log.Println(err)
+		return nil, nil, err
 	}
 	defer rows.Close()
 
@@ -106,7 +112,7 @@ func GetFirstPostsUnionFromDB(limitNum int) ([]PostsUnion, int64) {
 		err = rows.Scan(&p.Title, &p.Link, &p.CreateDate, &p.ModifyDate, &p.ShortParagraph, &p.Category, &p.FeedImage,
 			&p.OriginalLink, &p.FeedImageSaved, &p.Factor, &p.TableType)
 		if err != nil {
-			log.Println(err)
+			return nil, nil, err
 		}
 
 		postsUnionArray = append(postsUnionArray, p)
@@ -114,15 +120,15 @@ func GetFirstPostsUnionFromDB(limitNum int) ([]PostsUnion, int64) {
 
 	}
 
-	return postsUnionArray, lastID
+	return postsUnionArray, lastID, err
 
 }
 
-func GetNextPostsUnionFromDB(limitNum int, lastID int64) ([]PostsUnion, int64){
+func GetNextPostsUnionFromDB(limitNum int, lastID int64) ([]PostsUnion, int64, error){
 
 	dbPostgres, err := pgx.Connect(loads.PgConfigLoaded)
 	if err != nil {
-		log.Println(err.Error())
+		return nil, nil, err
 	}
 	defer dbPostgres.Close()
 
@@ -137,7 +143,7 @@ func GetNextPostsUnionFromDB(limitNum int, lastID int64) ([]PostsUnion, int64){
 
 	rows, err := dbPostgres.Query(sqlQuery, lastID, lastID, limitNum)
 	if err != nil {
-		log.Println(err)
+		return nil, nil, err
 	}
 	defer rows.Close()
 
@@ -146,7 +152,7 @@ func GetNextPostsUnionFromDB(limitNum int, lastID int64) ([]PostsUnion, int64){
 		err = rows.Scan(&p.Title, &p.Link, &p.CreateDate, &p.ModifyDate, &p.ShortParagraph, &p.Category, &p.FeedImage,
 			&p.OriginalLink, &p.FeedImageSaved, &p.Factor, &p.TableType)
 		if err != nil {
-			log.Println(err)
+			return nil, nil, err
 		}
 
 		postsUnionArray = append(postsUnionArray, p)
@@ -154,5 +160,5 @@ func GetNextPostsUnionFromDB(limitNum int, lastID int64) ([]PostsUnion, int64){
 
 	}
 
-	return postsUnionArray, lastID
+	return postsUnionArray, lastID, err
 }
