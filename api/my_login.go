@@ -267,7 +267,6 @@ func LogoutSession(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("500 - Something bad happened!"))
 		return
 	}
-	//log.Println(r)
 
 	// 세션 정보 가져오기
 	loginType := session.Values["login_type"]
